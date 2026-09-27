@@ -14,6 +14,7 @@ import java.util.concurrent.Future;
  *  Можно ограничить количество поступающих запросов от каждого конкретного производителя, используя параметр quota.producer.default.
  *  quota.producer.default=2 означает, что запросы от производителей могут поступать со скоростью не больше, чем 2 мегабита в секунду.
 * */
+
 public class LowLevelProducer {
 
     public static final String TOPIC = "NewVisitors";
@@ -27,8 +28,8 @@ public class LowLevelProducer {
 
         try (Producer<String, String> producer = new KafkaProducer<>(propsForProducer)) {
 
-            ProducerRecord<String, String> recWithAllParams = new ProducerRecord<>(TOPIC, 1, System.currentTimeMillis(), "someKey", "Some Visitor");
-            recWithAllParams.headers().add(
+            ProducerRecord<String, String> recordWithAllParams = new ProducerRecord<>(TOPIC, 1, System.currentTimeMillis(), "someKey", "Some Visitor");
+            recordWithAllParams.headers().add(
                     "my-header",
                     "my-value".getBytes(StandardCharsets.UTF_8)
             );
@@ -37,7 +38,7 @@ public class LowLevelProducer {
             producer.send(recWithMinimumParams);
 
             /* тип отправки: синхронный - дожидаемся выполнения метода get for Future. */
-            Future<RecordMetadata> recordMetadataFuture = producer.send(recWithAllParams);
+            Future<RecordMetadata> recordMetadataFuture = producer.send(recordWithAllParams);
             RecordMetadata recordMetadata = recordMetadataFuture.get();
             printRecordMetadata(recordMetadata);
 

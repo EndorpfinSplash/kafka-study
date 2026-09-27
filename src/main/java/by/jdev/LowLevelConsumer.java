@@ -5,11 +5,11 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
 import static by.jdev.LowLevelProducer.TOPIC;
+
 /**
  * Координатор группы расположен на брокере и контролирует сердцебиения и запросы на вычитку из очереди.
  * Лидер группы- 1ый подключившийся потребитель, который выполняет перераспределение партиций на участников группы.
@@ -40,8 +40,8 @@ public class LowLevelConsumer {
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));// указывает сколько ждать, если сообщений нет
 
-            for (ConsumerRecord<String, String> record : records)
-                System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
+            for (ConsumerRecord<String, String> consumerRecord : records)
+                System.out.printf("offset = %d, key = %s, value = %s%n", consumerRecord.offset(), consumerRecord.key(), consumerRecord.value());
         }
     }
 }
