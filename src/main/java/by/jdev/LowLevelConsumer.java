@@ -19,7 +19,11 @@ public class LowLevelConsumer {
     public static void main(String[] args) {
         Properties props = new Properties();
         props.setProperty("bootstrap.servers", "localhost:9092");
+        /**
+         * Если при создании потребителя не указать идентификатор группы, то будет создан особый тип потребителя — автономный потребитель (standalone consumer).
+         Ключевое отличие таких потребителей — вместо того, чтобы полагаться на механизмы Kafka в управлении своим состоянием, они полностью отдают это на откуп пользовательскому коду.*/
         props.setProperty("group.id", "group1");
+
         props.setProperty("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.setProperty("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 
