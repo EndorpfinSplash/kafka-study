@@ -23,32 +23,39 @@ public class MysteryConsumer {
         props.setProperty("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.setProperty("auto.commit.interval.ms", "20000");
 
-        ExecutorService executor = Executors.newFixedThreadPool(numberOfConsumers);
-        for (int num = 1; num <= numberOfConsumers; num++) {
-            String consumerName = baseConsumerName + "-" + num;
-            executor.submit(() -> {
-                //потребитель не-потокобезопасный, поэтому создаем каждого в своем потоке
-                KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
-                consumer.subscribe(List.of("kafka-mystery"));
+        try (ExecutorService executor = Executors.newFixedThreadPool(numberOfConsumers)) {
+            for (int num = 1; num <= numberOfConsumers; num++) {
+                String consumerName = baseConsumerName + "-" + num;
+                executor.submit(
+                        () -> {
+                            //потребитель не-потокобезопасный, поэтому создаем каждого в своем потоке
+                            try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props)) {
 
-                System.out.println("Создан потребитель с именем " + consumerName);
+                                consumer.subscribe(List.of("kafka-mystery"));
 
-                while (true) {
-                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(5000));
-                    System.out.println("Новая итерация цикла для потребителя " + consumerName);
-                    for (ConsumerRecord<String, String> consumerRecord : records) {
-                        long timeToReceive = System.currentTimeMillis() - consumerRecord.timestamp();
-                        System.out.printf("Потребитель: %s, сообщение: %s, ключ: %s, номер партиции: %d, офсет: %d, время на доставку: %d%n",
-                                consumerName,
-                                consumerRecord.value(),
-                                consumerRecord.key(),
-                                consumerRecord.partition(),
-                                consumerRecord.offset(),
-                                timeToReceive
-                        );
-                    }
-                }
-            });
+                                System.out.println("Создан потребитель с именем " + consumerName);
+
+                                while (true) {
+                                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+                                    System.out.println("Новая итерация цикла для потребителя " + consumerName);
+                                    for (ConsumerRecord<String, String> consumerRecord : records) {
+                                        long timeToReceive = System.currentTimeMillis() - consumerRecord.timestamp();
+                                        System.out.printf("Потребитель: %s, сообщение: %s, ключ: %s, номер партиции: %d, офсет: %d, время на доставку: %d%n",
+                                                consumerName,
+                                                consumerRecord.value(),
+                                                consumerRecord.key(),
+                                                consumerRecord.partition(),
+                                                consumerRecord.offset(),
+                                                timeToReceive
+                                        );
+                                    }
+                                }
+                            }
+
+                        }
+                );
+            }
         }
+
     }
 }
