@@ -14,7 +14,7 @@ public class MysteryConsumer {
 
     public static void main(String[] args) {
         String baseConsumerName = "mystery-consumer-new"; //args[0];
-        Integer numberOfConsumers = 3; //Integer.parseInt(args[1]);
+        int numberOfConsumers = 3; //Integer.parseInt(args[1]);
 
         Properties props = new Properties();
         props.setProperty("bootstrap.servers", "localhost:9092");
@@ -36,10 +36,16 @@ public class MysteryConsumer {
                 while (true) {
                     ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(5000));
                     System.out.println("Новая итерация цикла для потребителя " + consumerName);
-                    for (ConsumerRecord<String, String> record : records) {
-                        long timeToReceive = System.currentTimeMillis() - record.timestamp();
+                    for (ConsumerRecord<String, String> consumerRecord : records) {
+                        long timeToReceive = System.currentTimeMillis() - consumerRecord.timestamp();
                         System.out.printf("Потребитель: %s, сообщение: %s, ключ: %s, номер партиции: %d, офсет: %d, время на доставку: %d%n",
-                                consumerName, record.value(), record.key(), record.partition(), record.offset(), timeToReceive);
+                                consumerName,
+                                consumerRecord.value(),
+                                consumerRecord.key(),
+                                consumerRecord.partition(),
+                                consumerRecord.offset(),
+                                timeToReceive
+                        );
                     }
                 }
             });

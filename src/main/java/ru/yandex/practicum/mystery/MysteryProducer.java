@@ -14,7 +14,7 @@ public class MysteryProducer {
 
     public static void main(String[] args) {
         String baseProducerName = "mystery-producer";//args[0];
-        Integer numberOfProducers = 3; //Integer.parseInt(args[1]);
+        int numberOfProducers = 3; //Integer.parseInt(args[1]);
 
         Properties props = new Properties();
         props.setProperty("bootstrap.servers", "localhost:9092");
@@ -35,12 +35,12 @@ public class MysteryProducer {
                 while (true) {
                     try {
                         //генерируем индекс для ключа, от 1 о 10
-                        Integer keyIdx = ThreadLocalRandom.current().nextInt(0, 10) + 1;
+                        int keyIdx = ThreadLocalRandom.current().nextInt(0, 10) + 1;
                         //создаем ключ
                         String messageKey = "key" + keyIdx;
 
                         //генерируем магическое число от 0 до 100
-                        Integer magicNumber = ThreadLocalRandom.current().nextInt(0, 100);
+                        int magicNumber = ThreadLocalRandom.current().nextInt(0, 100);
                         //собираем сообщение
                         String messageValue = producerName + " " + magicNumber;
 
@@ -50,7 +50,7 @@ public class MysteryProducer {
                         producer.send(message);
 
                         //Определяем паузу перед отправкой следующего сообщения - от 0 до 2 секунд
-                        Integer timeToWait = ThreadLocalRandom.current().nextInt(0, 2000);
+                        int timeToWait = ThreadLocalRandom.current().nextInt(0, 2000);
                         Thread.sleep(timeToWait);
 
                     } catch (InterruptedException e) {
