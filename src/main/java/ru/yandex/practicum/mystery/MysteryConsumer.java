@@ -21,7 +21,7 @@ public class MysteryConsumer {
         props.setProperty("group.id", "mystery-consumers");
         props.setProperty("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.setProperty("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.setProperty("auto.commit.interval.ms", "20000");
+//        props.setProperty("auto.commit.interval.ms", "20000");
 
         try (ExecutorService executor = Executors.newFixedThreadPool(numberOfConsumers)) {
             for (int num = 1; num <= numberOfConsumers; num++) {
@@ -37,7 +37,7 @@ public class MysteryConsumer {
 
                                 while (true) {
                                     ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-                                    System.out.println("Новая итерация цикла для потребителя " + consumerName);
+//                                    System.out.println("Новая итерация цикла для потребителя " + consumerName);
                                     for (ConsumerRecord<String, String> consumerRecord : records) {
                                         long timeToReceive = System.currentTimeMillis() - consumerRecord.timestamp();
                                         System.out.printf("Потребитель: %s, сообщение: %s, ключ: %s, номер партиции: %d, офсет: %d, время на доставку: %d%n",
